@@ -85,7 +85,6 @@ const updateCompletedStatus = async(req, res) => {
 const readTasksController = async (req, res) => {
     const username = req.session.user.username;
     const userId = req.session.user.userId;
-    console.log("user", req.session.user)
     console.log("username", username)
     console.log("userId", userId)
     try {

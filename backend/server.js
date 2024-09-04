@@ -27,11 +27,14 @@ app.use(cors({
   origin : `${BASE_URL}`, //Frontend URL
   credentials : true // Allow credentials (cookies, headers)
 }));
+
+
 app.use(session({
   secret: process.env.SECRET_KEY,
   store: store,
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // Set `secure: true` if using HTTPS
 }));
 
 app.use("/auth", authRouter);
