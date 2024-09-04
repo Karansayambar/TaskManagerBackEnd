@@ -34,7 +34,7 @@ app.use(session({
   store: store,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false } // Set `secure: true` if using HTTPS
+  cookie: { secure: false, httpOnly: false } // Set `secure: true` if using HTTPS
 }));
 
 app.use("/auth", authRouter);
