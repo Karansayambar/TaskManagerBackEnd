@@ -113,7 +113,6 @@ const readTask = ({ userId }) => {
                     },
                 },
             ]);
-            console.log("todos", todoDb)
            return resolve(todoDb);
         } catch (error) {
             reject(error);

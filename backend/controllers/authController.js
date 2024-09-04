@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const { userDataValidation, userDataValidationForLogin } = require("../utils/authutils");
 const session = require("express-session");
+const { getToken } = require("../utils/helper");
 
 const registerController = async (req, res) => {
   const { email, username, password } = req.body;
@@ -26,12 +27,7 @@ const registerController = async (req, res) => {
 };
 
 const loginController = async (req, res) => {
-  console.log("hii", req.body)
-  if (req.session.isAuth) {
-    return res.status(400).send({
-      message: "User already logged in",
-    });
-  }
+
   const { email, password } = req.body;
   try {
     await userDataValidationForLogin({ email, password });
@@ -45,15 +41,15 @@ const loginController = async (req, res) => {
         message: "Incorrect password",
       });
     }
-    req.session.isAuth = true;
-    req.session.user = {
-      userId: userDB._id,
-      username: userDB.username,
-      email: userDB.email,
-    };
+    
+    const token = getToken(userDB?._id)
+    const user = userDB.toJSON()
+    delete user.password
+
     return res.status(200).send({
       message: "User Logged In Successfully",
-      data: userDB,
+      data: user,
+      token
     });
   } catch (error) {
     return res.status(500).send({
@@ -63,17 +59,11 @@ const loginController = async (req, res) => {
 };
 
 const logoutController = async (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
+
       return res.status(400).send({
-        message: "Logout unsuccessful",
-      });
-    } else {
-      return res.status(200).send({
-        message: "Logout successful",
-      });
-    }
-  });
+        message: "Logout Successful",
+        status:true
+     });
 };
 
 module.exports = { registerController, loginController, logoutController };

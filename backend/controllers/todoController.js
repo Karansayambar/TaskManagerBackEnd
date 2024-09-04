@@ -5,8 +5,8 @@ const { todoDataValidation } = require("../utils/todoDataValidation");
 
 const createTodoController = async (req, res) => {
     const {task, isImportant, dueDate, priority} = req.body;
-    const userId = req.session.user.userId;
-    console.log("user created in userId", userId)
+    console.log("create-todo", req.body)
+    const userId = req.user._id;
 
     try {
         await todoDataValidation({task});
@@ -31,8 +31,8 @@ const createTodoController = async (req, res) => {
 
 const editTodoController = async(req, res) => {
     const {task, dueDate, todoId} = req.body;
-    const userId = req.session.user.userId;
-    // console.log(userId)
+    const userId = req.user._id;
+
     try {
         await todoDataValidation({ task});
         const todoDb = await getTodoById({todoId});
@@ -57,8 +57,7 @@ const editTodoController = async(req, res) => {
 
 const updateCompletedStatus = async(req, res) => {
     const { todoId} = req.body;
-    console.log(req.body)
-    const userId = req.session.user.userId;
+    const userId = req.user._id;
     try {
         const todoDb = await getTodoById({todoId});
     
@@ -73,7 +72,6 @@ const updateCompletedStatus = async(req, res) => {
             message: "Todo Updated Successfully",
             data: editTodoDb,
           });
-          console.log(editTodoDb)
       } catch (error) {
         return res.status(500).send({
             message: "Internal Server Error",
@@ -83,10 +81,8 @@ const updateCompletedStatus = async(req, res) => {
     }
 
 const readTasksController = async (req, res) => {
-    const username = req.session.user.username;
-    const userId = req.session.user.userId;
-    console.log("username", username)
-    console.log("userId", userId)
+
+    const userId = req.user._id;
     try {
         const readDb = await readTask({userId});
         if(readDb.length === 0){
@@ -108,8 +104,7 @@ const readTasksController = async (req, res) => {
 }
 
 const isImportantTodoController = async (req, res) => {
-    const userId = req.session.user.userId;
-    const username = req.session.user.username;
+    const userId = req.user._id;
     const { todoId , status } = req.body;
     try {
         const todoDb = await getTodoById({todoId});
@@ -134,7 +129,7 @@ const isImportantTodoController = async (req, res) => {
 }
 const deleteTaskController = async (req, res) => {
     const { todoId } = req.body;
-    const userId = req.session.user.userId;
+    const userId = req.user._id;
     try {
         const taskDb = await getTodoById({todoId});
         if (!userId.equals(taskDb.userId)) {
